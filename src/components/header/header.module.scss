@@ -1,0 +1,33 @@
+.headbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #fff;
+}
+
+.title {
+    padding-left: 22px;
+    font-family: Inter, Arial, sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 28px;
+}
+.headButtons {
+    padding-right: 22px;
+}
+.buttonIn {
+    font-family: Inter, Arial, sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 28px;
+    height: 51px;
+}
+.buttonUp {
+    font-family: Inter, Arial, sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 28px;
+    height: 51px;
+    color: #52C41A;
+    border-color: #52C41A;
+}

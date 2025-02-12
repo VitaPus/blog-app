@@ -1,0 +1,22 @@
+.item {
+    width: 983px;
+    height: 140px;
+    display: flex;
+    background-color: #fff;
+    margin: 26px;
+    flex-direction: column;
+    justify-content: center;
+}
+.info {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 16px;
+}
+.textInfo {
+    display: flex;
+    gap: 10px
+}
+.userInfo {
+    display: flex;
+    gap: 10px
+}
