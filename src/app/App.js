@@ -1,26 +1,44 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { articlesFetch } from '../features/article-slice'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import Header from '../components/header'
-import { Pagination } from 'antd'
-import classes from './App.module.scss'
 import FrameList from '../components/frameList'
+import ArticlePage from '../components/page'
+import classes from './App.module.scss'
 
 const App = () => {
   const dispatch = useDispatch()
-  const { articles} = useSelector((state) => state.articles)
+  const { articles, totalArticles, status } = useSelector((state) => state.articles)
+  const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
-    dispatch(articlesFetch()).then((result) => {
-      console.log('Результат запроса:', result.payload) // Вывод данных в консоль
-    })
-  }, [dispatch])
+    dispatch(articlesFetch(currentPage))
+  }, [dispatch, currentPage])
+
   return (
-    <div className={classes.body}>
-      <Header />
-      <FrameList articles={articles} />
-      <Pagination  defaultCurrent={1} total={50} />
-    </div>
+    <Router>
+      <div className={classes.body}>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Navigate replace to="/articles" />} />
+          <Route path="/articles/:slug" element={<ArticlePage />} />
+          <Route
+            path="/articles"
+            element={
+              <FrameList
+                articles={articles}
+                status={status}
+                totalArticles={totalArticles}
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+              />
+            }
+          />
+        </Routes>
+      </div>
+    </Router>
   )
 }
+
 export default App

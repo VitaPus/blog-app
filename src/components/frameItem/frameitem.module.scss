@@ -17,6 +17,9 @@
     display: flex;
     gap: 10px;
     padding-top: 15px;
+    width: 300px;
+    height: 70px;
+    overflow: hidden;
 }
 .userInfo {
     display: flex;
@@ -32,11 +35,17 @@ img {
     font-weight: 400;
     color: #1890ff;
     margin: 0px;
+    width: 160px;
+    height: 28px;
+    overflow: hidden;
 }
 .itemBody {
     padding-left: 16px;
     width: 682px;
     height: 45px;
+    overflow: hidden;
+    font-size: 12px;
+    line-height: 22px;
 }
 .date {
     font-size: 12px;
@@ -47,4 +56,9 @@ img {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+}
+.tags {
+    width: 160px;
+    height: 28px;
+    overflow: hidden;
 }
