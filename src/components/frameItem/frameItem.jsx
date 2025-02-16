@@ -1,20 +1,19 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { format } from 'date-fns';
-import { enGB } from 'date-fns/locale';
-import classes from './frameitem.module.scss';
+import React from 'react'
+import { format } from 'date-fns'
+import { enGB } from 'date-fns/locale'
+import classes from './frameitem.module.scss'
 
-const FrameItem = ({ article }) => {
-  const formattedDate = format(new Date(article.createdAt), 'MMM d, yyyy', { locale: enGB });
+const FrameItem = ({ article, onClick }) => {
+  const formattedDate = format(new Date(article.createdAt), 'MMM d, yyyy', { locale: enGB })
 
   return (
-    <div className={classes.item}>
+    <div className={classes.item} onClick={() => onClick(article.slug)}>
+      {' '}
+      {/* Добавляем onClick */}
       <div className={classes.info}>
         <div className={classes.textInfo}>
           <div>
-            <h5 className={classes.itemTitle}>
-              <Link to={`/articles/${article.slug}`}>{article.title}</Link>
-            </h5>
+            <h5 className={classes.itemTitle}>{article.title}</h5>
             <div className={classes.tags}>
               {article.tagList.length > 0 ? (
                 article.tagList.map((tag, index) => (
@@ -34,13 +33,12 @@ const FrameItem = ({ article }) => {
             <div>{article.author.username}</div>
             <div className={classes.date}>{formattedDate}</div>
           </div>
-          <img src={article.author.image} alt="avatar" />
+          <img src={article.author.image} alt="avatar" className={classes.avaImg} />
         </div>
       </div>
-      <div className={classes.itemBody}>{article.body}</div>
+      <div className={classes.itemDescription}>{article.description}</div>
     </div>
-  );
-};
+  )
+}
 
-export default FrameItem;
-
+export default FrameItem

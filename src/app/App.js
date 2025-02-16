@@ -5,16 +5,31 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Header from '../components/header'
 import FrameList from '../components/frameList'
 import ArticlePage from '../components/page'
+import SignInPage from '../components/signInPage'
+import SignUpPage from '../components/signUpPage'
+import ProfilePage from '../components/profilePage'
 import classes from './App.module.scss'
 
 const App = () => {
   const dispatch = useDispatch()
-  const { articles, totalArticles, status } = useSelector((state) => state.articles)
   const [currentPage, setCurrentPage] = useState(1)
+  
+  // Получаем состояние из Redux
+  const articles = useSelector((state) => state.articles.articles)
+  const status = useSelector((state) => state.articles.status)
+  const totalArticles = useSelector((state) => state.articles.totalArticles)
 
   useEffect(() => {
+    // Загрузка статей для текущей страницы
     dispatch(articlesFetch(currentPage))
-  }, [dispatch, currentPage])
+  }, [dispatch, currentPage])  // Зависимости: изменение currentPage вызывает новый запрос
+
+  // Логируем для диагностики
+  useEffect(() => {
+    console.log('Articles:', articles)
+    console.log('Status:', status)
+    console.log('Total Articles:', totalArticles)
+  }, [articles, status, totalArticles])  // Логируем изменения данных
 
   return (
     <Router>
@@ -35,6 +50,9 @@ const App = () => {
               />
             }
           />
+          <Route path="/sign-in" element={<SignInPage />} />
+          <Route path="/sign-up" element={<SignUpPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Routes>
       </div>
     </Router>

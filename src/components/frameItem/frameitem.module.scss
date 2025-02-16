@@ -25,7 +25,7 @@
     display: flex;
     gap: 10px
 }
-img {
+.avaImg {
     width: 45px;
     height: 45px;
     border-radius: 25px;
@@ -39,7 +39,7 @@ img {
     height: 28px;
     overflow: hidden;
 }
-.itemBody {
+.itemDescription {
     padding-left: 16px;
     width: 682px;
     height: 45px;
