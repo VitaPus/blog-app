@@ -1,10 +1,16 @@
 import React from "react";
 import { Button } from "antd";
 import { useNavigate } from "react-router-dom";
-import classes from './header.module.scss'
+import { useDispatch, useSelector } from "react-redux";
+import { logOut } from "../../features/article-slice";
+import classes from './header.module.scss';
 
 const Header = () => {
-  const navigate = useNavigate(); // Получаем функцию навигации
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // Получаем данные о пользователе из состояния Redux
+  const { user, token } = useSelector((state) => state.articles || {});
 
   // Обработчик для кнопки "Sign In"
   const handleSignInClick = () => {
@@ -16,24 +22,43 @@ const Header = () => {
     navigate("/sign-up");
   };
 
+  // Обработчик для кнопки "Log Out"
+  const handleLogOutClick = () => {
+    dispatch(logOut()); // Вызов action для выхода
+    navigate("/"); // Перенаправление на главную страницу
+  };
+
   // Обработчик для перехода на главную страницу
   const handleTitleClick = () => {
-    navigate("/"); // Переход на главную страницу
+    navigate("/");
   };
 
   return (
     <div className={classes.headbar}>
-      {/* Добавлен обработчик клика на заголовок */}
       <h6 className={classes.title} onClick={handleTitleClick}>
         Realworld Blog
       </h6>
       <div className={classes.headButtons}>
-        <Button type="text" className={classes.buttonIn} onClick={handleSignInClick}>
-          Sign In
-        </Button>
-        <Button className={classes.buttonUp} onClick={handleSignUpClick}>
-          Sign Up
-        </Button> 
+        {token ? (
+          // Если пользователь авторизован
+          <>
+            <span className={classes.username}>{user?.username}</span>
+            <img src={user?.image} alt="avatar" className={classes.avaImg} />
+            <Button className={classes.buttonUp} onClick={handleLogOutClick}>
+              Log Out
+            </Button>
+          </>
+        ) : (
+          // Если пользователь не авторизован
+          <>
+            <Button type="text" className={classes.buttonIn} onClick={handleSignInClick}>
+              Sign In
+            </Button>
+            <Button className={classes.buttonUp} onClick={handleSignUpClick}>
+              Sign Up
+            </Button>
+          </>
+        )}
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 const initialState = {
   // Статьи
@@ -6,34 +6,32 @@ const initialState = {
   totalArticles: 0,
   status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
   error: null,
-  
+
   // Пользователь
-  user: null,
+  user: JSON.parse(localStorage.getItem('user')) || null,
   token: localStorage.getItem('token') || null,
   userStatus: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
   userError: null,
-}
+};
 
 // Асинхронное действие для загрузки статей
 export const articlesFetch = createAsyncThunk('articles/articlesFetch', async (page = 1) => {
-  const limit = 10
-  const offset = (page - 1) * limit
+  const limit = 10;
+  const offset = (page - 1) * limit;
 
   try {
-    const response = await fetch(`https://blog-platform.kata.academy/api/articles?limit=${limit}&offset=${offset}`)
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch articles')
-    }
+    const response = await fetch(`https://blog-platform.kata.academy/api/articles?limit=${limit}&offset=${offset}`);
+    if (!response.ok) throw new Error('Failed to fetch articles');
 
-    const data = await response.json()
-    console.log('Данные, полученные с сервера:', data) // Логирование для отладки
+    const data = await response.json();
+    console.log('✅ Данные, полученные с сервера (статьи):', data);
 
-    return { articles: data.articles, total: data.articlesCount }
+    return { articles: data.articles, total: data.articlesCount };
   } catch (error) {
-    throw new Error(error.message || 'Ошибка загрузки статей')
+    console.error('❌ Ошибка загрузки статей:', error.message);
+    throw new Error(error.message || 'Ошибка загрузки статей');
   }
-})
+});
 
 // Регистрация
 export const signUp = createAsyncThunk('user/signUp', async (userData, { rejectWithValue }) => {
@@ -42,15 +40,20 @@ export const signUp = createAsyncThunk('user/signUp', async (userData, { rejectW
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ user: userData }),
-    })
-    if (!response.ok) throw new Error('Ошибка регистрации')
-    const data = await response.json()
-    localStorage.setItem('token', data.user.token)
-    return data.user
+    });
+
+    if (!response.ok) throw new Error('Ошибка регистрации');
+
+    const data = await response.json();
+    localStorage.setItem('token', data.user.token);
+    console.log('✅ Успешная регистрация:', data.user);
+
+    return data.user;
   } catch (err) {
-    return rejectWithValue(err.message)
+    console.error('❌ Ошибка регистрации:', err.message);
+    return rejectWithValue(err.message);
   }
-})
+});
 
 // Логин
 export const signIn = createAsyncThunk('user/signIn', async (credentials, { rejectWithValue }) => {
@@ -59,104 +62,118 @@ export const signIn = createAsyncThunk('user/signIn', async (credentials, { reje
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ user: credentials }),
-    })
-    if (!response.ok) throw new Error('Ошибка авторизации')
-    const data = await response.json()
-    localStorage.setItem('token', data.user.token)
-    return data.user
+    });
+
+    if (!response.ok) throw new Error('Ошибка авторизации');
+
+    const data = await response.json();
+    localStorage.setItem('token', data.user.token);
+    console.log('✅ Успешный логин:', data.user);
+
+    return data.user;
   } catch (err) {
-    return rejectWithValue(err.message)
+    console.error('❌ Ошибка авторизации:', err.message);
+    return rejectWithValue(err.message);
   }
-})
+});
 
 // Обновление профиля
 export const updateUser = createAsyncThunk('user/updateUser', async (userData, { rejectWithValue }) => {
   try {
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem('token');
     const response = await fetch('https://blog-platform.kata.academy/api/user', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', Authorization: `Token ${token}` },
       body: JSON.stringify({ user: userData }),
-    })
-    if (!response.ok) throw new Error('Ошибка обновления')
-    const data = await response.json()
-    return data.user
+    });
+
+    if (!response.ok) throw new Error('Ошибка обновления');
+
+    const data = await response.json();
+
+    return data.user;
   } catch (err) {
-    return rejectWithValue(err.message)
+    console.error('❌ Ошибка обновления профиля:', err.message);
+    return rejectWithValue(err.message);
   }
-})
+});
 
 const articleSlice = createSlice({
   name: 'article',
   initialState,
   reducers: {
+    logIn: (state, action) => {
+      state.user = action.payload.user;
+      state.token = action.payload.token;
+    },
     logOut: (state) => {
-      state.user = null
-      state.token = null
-      state.userStatus = 'idle'
-      state.userError = null
-      localStorage.removeItem('token')
+      console.log('🚪 Пользователь вышел из аккаунта');
+      state.user = null;
+      state.token = null;
+      state.userStatus = 'idle';
+      state.userError = null;
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
     },
   },
   extraReducers: (builder) => {
-    // Статьи
     builder
+      // Статьи
       .addCase(articlesFetch.pending, (state) => {
-        state.status = 'loading'
+        state.status = 'loading';
       })
       .addCase(articlesFetch.fulfilled, (state, action) => {
-        state.status = 'succeeded'
-        state.articles = action.payload.articles
-        state.totalArticles = action.payload.total
+        state.status = 'succeeded';
+        state.articles = action.payload.articles;
+        state.totalArticles = action.payload.total;
       })
       .addCase(articlesFetch.rejected, (state, action) => {
-        state.status = 'failed'
-        state.error = action.error.message
-        console.error('Ошибка при загрузке статей:', action.error.message)
+        state.status = 'failed';
+        state.error = action.error.message;
       })
-      
+
       // Регистрация
       .addCase(signUp.pending, (state) => {
-        state.userStatus = 'loading'
+        state.userStatus = 'loading';
       })
       .addCase(signUp.fulfilled, (state, action) => {
-        state.userStatus = 'succeeded'
-        state.user = action.payload
-        state.token = action.payload.token
+        state.userStatus = 'succeeded';
+        state.user = action.payload;
+        state.token = action.payload.token;
       })
       .addCase(signUp.rejected, (state, action) => {
-        state.userStatus = 'failed'
-        state.userError = action.payload
+        state.userStatus = 'failed';
+        state.userError = action.payload;
       })
-      
+
       // Логин
       .addCase(signIn.pending, (state) => {
-        state.userStatus = 'loading'
+        state.userStatus = 'loading';
       })
       .addCase(signIn.fulfilled, (state, action) => {
-        state.userStatus = 'succeeded'
-        state.user = action.payload
-        state.token = action.payload.token
+        state.userStatus = 'succeeded';
+        state.user = action.payload;
+        state.token = action.payload.token;
       })
       .addCase(signIn.rejected, (state, action) => {
-        state.userStatus = 'failed'
-        state.userError = action.payload
+        state.userStatus = 'failed';
+        state.userError = action.payload;
       })
-      
+
       // Обновление профиля
       .addCase(updateUser.pending, (state) => {
-        state.userStatus = 'loading'
+        state.userStatus = 'loading';
       })
       .addCase(updateUser.fulfilled, (state, action) => {
-        state.userStatus = 'succeeded'
-        state.user = action.payload
+        state.userStatus = 'succeeded';
+        state.user = action.payload;
       })
       .addCase(updateUser.rejected, (state, action) => {
-        state.userStatus = 'failed'
-        state.userError = action.payload
-      })
+        state.userStatus = 'failed';
+        state.userError = action.payload;
+      });
   },
-})
+});
 
-export const { logOut } = articleSlice.actions
-export default articleSlice.reducer
+export const { logOut, logIn } = articleSlice.actions;
+export default articleSlice.reducer;

@@ -2,6 +2,7 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { signIn } from '../../features/article-slice'
+import classes from './signInPage.module.scss'
 
 const SignInPage = () => {
   const dispatch = useDispatch()
@@ -21,7 +22,11 @@ const SignInPage = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <div className={classes.formPos}>
+      <h3>Sign In</h3>
+    <form onSubmit={handleSubmit(onSubmit)} className={classes.formIn}>
+    <div className={classes.inputBox}>
+      <label>Email address</label>
       <input
         type="email"
         {...register('email', {
@@ -31,18 +36,23 @@ const SignInPage = () => {
         placeholder="Email"
       />
       {errors.email && <p>{errors.email.message}</p>}
-
+      </div>
+      
+      <div className={classes.inputBox}>
+      <label>Email address</label>
       <input
         type="password"
         {...register('password', { required: 'Password is required' })}
         placeholder="Password"
       />
       {errors.password && <p>{errors.password.message}</p>}
+      </div>
 
       <button type="submit">
-        Sign In
+        Login
       </button>
     </form>
+    </div>
   )
 }
 
