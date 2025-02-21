@@ -33,6 +33,10 @@ const Header = () => {
     navigate("/");
   };
 
+  const handleProfileClick = () => {
+    navigate("/profile")
+  }
+
   return (
     <div className={classes.headbar}>
       <h6 className={classes.title} onClick={handleTitleClick}>
@@ -42,8 +46,9 @@ const Header = () => {
         {token ? (
           // Если пользователь авторизован
           <>
-            <span className={classes.username}>{user?.username}</span>
-            <img src={user?.image} alt="avatar" className={classes.avaImg} />
+            <button>create</button>
+            <span className={classes.username} onClick={handleProfileClick}>{user?.username}</span>
+            <img src={user?.image} alt="avatar" className={classes.avaImg} onClick={handleProfileClick} />
             <Button className={classes.buttonUp} onClick={handleLogOutClick}>
               Log Out
             </Button>

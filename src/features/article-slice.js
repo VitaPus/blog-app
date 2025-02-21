@@ -21,14 +21,12 @@ export const articlesFetch = createAsyncThunk('articles/articlesFetch', async (p
 
   try {
     const response = await fetch(`https://blog-platform.kata.academy/api/articles?limit=${limit}&offset=${offset}`);
-    if (!response.ok) throw new Error('Failed to fetch articles');
-
     const data = await response.json();
-    console.log('✅ Данные, полученные с сервера (статьи):', data);
+
+    if (!response.ok) throw new Error(data.errors?.message || 'Ошибка загрузки статей');
 
     return { articles: data.articles, total: data.articlesCount };
   } catch (error) {
-    console.error('❌ Ошибка загрузки статей:', error.message);
     throw new Error(error.message || 'Ошибка загрузки статей');
   }
 });
@@ -42,15 +40,15 @@ export const signUp = createAsyncThunk('user/signUp', async (userData, { rejectW
       body: JSON.stringify({ user: userData }),
     });
 
-    if (!response.ok) throw new Error('Ошибка регистрации');
-
     const data = await response.json();
+    if (!response.ok) throw new Error(data.errors?.message || 'Ошибка регистрации');
+
+    // Сохраняем пользователя и токен
     localStorage.setItem('token', data.user.token);
-    console.log('✅ Успешная регистрация:', data.user);
+    localStorage.setItem('user', JSON.stringify(data.user));
 
     return data.user;
   } catch (err) {
-    console.error('❌ Ошибка регистрации:', err.message);
     return rejectWithValue(err.message);
   }
 });
@@ -64,15 +62,15 @@ export const signIn = createAsyncThunk('user/signIn', async (credentials, { reje
       body: JSON.stringify({ user: credentials }),
     });
 
-    if (!response.ok) throw new Error('Ошибка авторизации');
-
     const data = await response.json();
+    if (!response.ok) throw new Error(data.errors?.message || 'Ошибка авторизации');
+
+    // Сохраняем пользователя и токен
     localStorage.setItem('token', data.user.token);
-    console.log('✅ Успешный логин:', data.user);
+    localStorage.setItem('user', JSON.stringify(data.user));
 
     return data.user;
   } catch (err) {
-    console.error('❌ Ошибка авторизации:', err.message);
     return rejectWithValue(err.message);
   }
 });
@@ -87,16 +85,35 @@ export const updateUser = createAsyncThunk('user/updateUser', async (userData, {
       body: JSON.stringify({ user: userData }),
     });
 
-    if (!response.ok) throw new Error('Ошибка обновления');
-
     const data = await response.json();
+    if (!response.ok) throw new Error(data.errors?.message || 'Ошибка обновления профиля');
+
+    // Обновляем данные в localStorage
+    localStorage.setItem('user', JSON.stringify(data.user));
 
     return data.user;
   } catch (err) {
-    console.error('❌ Ошибка обновления профиля:', err.message);
     return rejectWithValue(err.message);
   }
 });
+
+//Создание 
+export const sendArticle = createAsyncThunk('articles/sendArticle', async (articleData, { rejectWithValue }) => {
+  try {
+    const token = localStorage.getItem('token')
+    const response = await fetch('https://', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Token ${token}` },
+      body: JSON.stringify({article: articleData}),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.errors?.message || 'Ошибка при создании статьи');
+
+    return data.article;
+  } catch (err) {
+    return rejectWithValue(err.message)
+  }
+})
 
 const articleSlice = createSlice({
   name: 'article',
@@ -105,6 +122,8 @@ const articleSlice = createSlice({
     logIn: (state, action) => {
       state.user = action.payload.user;
       state.token = action.payload.token;
+      localStorage.setItem('user', JSON.stringify(action.payload.user));
+      localStorage.setItem('token', action.payload.token);
     },
     logOut: (state) => {
       console.log('🚪 Пользователь вышел из аккаунта');
@@ -130,6 +149,7 @@ const articleSlice = createSlice({
       .addCase(articlesFetch.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
+        console.error('Ошибка загрузки статей:', action.error.message);
       })
 
       // Регистрация
@@ -144,6 +164,7 @@ const articleSlice = createSlice({
       .addCase(signUp.rejected, (state, action) => {
         state.userStatus = 'failed';
         state.userError = action.payload;
+        console.error('Ошибка регистрации:', action.payload);
       })
 
       // Логин
@@ -158,6 +179,7 @@ const articleSlice = createSlice({
       .addCase(signIn.rejected, (state, action) => {
         state.userStatus = 'failed';
         state.userError = action.payload;
+        console.error('Ошибка авторизации:', action.payload);
       })
 
       // Обновление профиля
@@ -171,7 +193,22 @@ const articleSlice = createSlice({
       .addCase(updateUser.rejected, (state, action) => {
         state.userStatus = 'failed';
         state.userError = action.payload;
+        console.error('Ошибка обновления профиля:', action.payload);
+      })
+
+      .addCase(sendArticle.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(sendArticle.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.articles.push(action.payload); // добавляем новую статью в список
+      })
+      .addCase(sendArticle.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload;
+        console.error('Ошибка создания статьи:', action.payload);
       });
+      
   },
 });
 

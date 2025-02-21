@@ -1,11 +1,13 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { signIn } from '../../features/article-slice'
 import classes from './signInPage.module.scss'
 
 const SignInPage = () => {
   const dispatch = useDispatch()
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -16,6 +18,7 @@ const SignInPage = () => {
     try {
       await dispatch(signIn(data)).unwrap() // Обработать ошибку, если возникнет
       alert('Sign In successful!')
+      navigate("/")
     } catch (error) {
       console.error('Sign-in error:', error)
     }
