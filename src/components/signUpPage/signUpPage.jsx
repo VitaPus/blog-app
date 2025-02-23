@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { signUp } from '../../features/article-slice'
 import classes from './signUpPage.module.scss'
+import { Button } from 'antd'
 
 const SignUpPage = () => {
   const dispatch = useDispatch()
@@ -85,7 +86,7 @@ const SignUpPage = () => {
         {errors.terms && <p>{errors.terms.message}</p>}
 
         {/* Убираем onClick с кнопки, форма будет отправляться по submit */}
-        <button type="submit">Sign Up</button>
+        <Button type="primary">Sign Up</Button>
       </form>
     </div>
   )

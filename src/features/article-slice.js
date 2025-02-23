@@ -97,14 +97,22 @@ export const updateUser = createAsyncThunk('user/updateUser', async (userData, {
   }
 });
 
-//Создание 
-export const sendArticle = createAsyncThunk('articles/sendArticle', async (articleData, { rejectWithValue }) => {
+//Создание статьи
+export const sendArticle = createAsyncThunk(
+  'articles/sendArticle', async (articleData, { rejectWithValue }) => {
   try {
     const token = localStorage.getItem('token')
-    const response = await fetch('https://', {
+    const response = await fetch('https://blog-platform.kata.academy/api/articles', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Token ${token}` },
-      body: JSON.stringify({article: articleData}),
+      headers: { 'Content-Type': 'application/json',
+        Authorization: `Token ${token}` },
+      body: JSON.stringify({
+        article: {
+          title: articleData.title,
+          description: articleData.description,
+          body: articleData.body,
+          tagList: articleData.tagList || []
+        }}),
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.errors?.message || 'Ошибка при создании статьи');

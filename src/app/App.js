@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { articlesFetch } from '../features/article-slice'
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom'
 import Header from '../components/header'
 import FrameList from '../components/frameList'
 import ArticlePage from '../components/page'
@@ -10,6 +10,8 @@ import SignUpPage from '../components/signUpPage'
 import ProfilePage from '../components/profilePage'
 import classes from './App.module.scss'
 import CreateArticle from '../components/createArticle/create-article'
+import PrivateRoute from '../features/private'
+import EditArticle from '../components/editArticle/edit-article'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -54,7 +56,9 @@ const App = () => {
           <Route path="/sign-in" element={<SignInPage />} />
           <Route path="/sign-up" element={<SignUpPage />} />
           <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/new-article" element={<CreateArticle />} />
+          <Route path="/new-article" element={<PrivateRoute><CreateArticle /></PrivateRoute>} />
+          <Route path="/articles/:slug/edit" element={<EditArticle />} />
+
         </Routes>
       </div>
     </Router>

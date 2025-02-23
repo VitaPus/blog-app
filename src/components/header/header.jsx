@@ -1,40 +1,44 @@
-import React from "react";
-import { Button } from "antd";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { logOut } from "../../features/article-slice";
-import classes from './header.module.scss';
+import React from 'react'
+import { Button } from 'antd'
+import { useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { logOut } from '../../features/article-slice'
+import classes from './header.module.scss'
 
 const Header = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   // Получаем данные о пользователе из состояния Redux
-  const { user, token } = useSelector((state) => state.articles || {});
+  const { user, token } = useSelector((state) => state.articles || {})
 
   // Обработчик для кнопки "Sign In"
   const handleSignInClick = () => {
-    navigate("/sign-in");
-  };
+    navigate('/sign-in')
+  }
 
   // Обработчик для кнопки "Sign Up"
   const handleSignUpClick = () => {
-    navigate("/sign-up");
-  };
+    navigate('/sign-up')
+  }
 
   // Обработчик для кнопки "Log Out"
   const handleLogOutClick = () => {
-    dispatch(logOut()); // Вызов action для выхода
-    navigate("/"); // Перенаправление на главную страницу
-  };
+    dispatch(logOut()) // Вызов action для выхода
+    navigate('/') // Перенаправление на главную страницу
+  }
 
   // Обработчик для перехода на главную страницу
   const handleTitleClick = () => {
-    navigate("/");
-  };
+    navigate('/')
+  }
 
   const handleProfileClick = () => {
-    navigate("/profile")
+    navigate('/profile')
+  }
+
+  const handleCreateClick = () => {
+    navigate('/new-article')
   }
 
   return (
@@ -46,10 +50,16 @@ const Header = () => {
         {token ? (
           // Если пользователь авторизован
           <>
-            <button>create</button>
-            <span className={classes.username} onClick={handleProfileClick}>{user?.username}</span>
-            <img src={user?.image} alt="avatar" className={classes.avaImg} onClick={handleProfileClick} />
-            <Button className={classes.buttonUp} onClick={handleLogOutClick}>
+            <Button onClick={handleCreateClick} className={classes.createBtn} type="primary">
+              Create article
+            </Button>
+            <div className={classes.userBox}>
+              <span className={classes.username} onClick={handleProfileClick}>
+                {user?.username}
+              </span>
+              <img src={user?.image} alt="avatar" className={classes.avaImg} onClick={handleProfileClick} />
+            </div>
+            <Button className={classes.buttonLogOut} onClick={handleLogOutClick}>
               Log Out
             </Button>
           </>
@@ -66,7 +76,7 @@ const Header = () => {
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Header;
+export default Header

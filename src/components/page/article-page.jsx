@@ -1,15 +1,50 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
-import { Spin, Alert } from 'antd'
-import { format } from 'date-fns';
-import { enGB } from 'date-fns/locale';
+import { Spin, Alert, Modal, Button, message, Tag } from 'antd'
+import { format } from 'date-fns'
+import { enGB } from 'date-fns/locale'
 import classes from './article-page.module.scss'
+import { useSelector } from 'react-redux'
 
 const ArticlePage = () => {
   const { slug } = useParams()
   const [article, setArticle] = useState(null)
   const [status, setStatus] = useState('loading')
+  const { token, user } = useSelector((state) => state.articles || {}) // ⬅️ Добавляем username
+  const navigate = useNavigate()
+  console.log('Current User:', user?.username)
+  console.log('Article Author:', article?.author?.username)
+
+  const handleDelete = () => {
+    Modal.confirm({
+      title: 'Are you sure you want to delete this article?',
+      okText: 'Yes, delete',
+      okType: 'danger',
+      cancelText: 'Cancel',
+      onOk: () => {
+        fetch(`https://blog-platform.kata.academy/api/articles/${slug}`, {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        })
+          .then((res) => {
+            if (res.ok) {
+              message.success('Article deleted')
+              navigate('/')
+              window.location.reload()
+            } else {
+              throw new Error()
+            }
+          })
+          .catch(() => message.error('Failed to delete article'))
+      },
+    })
+  }
+  const handleEdit = () => {
+    navigate(`/articles/${slug}/edit`)
+  }
 
   let formattedDate = ''
   if (article) {
@@ -34,19 +69,19 @@ const ArticlePage = () => {
 
   return (
     <div className={classes.article}>
-     <div className={classes.info}>
+      <div className={classes.info}>
         <div className={classes.textInfo}>
           <div>
             <h5 className={classes.itemTitle}>{article.title}</h5>
             <div className={classes.tags}>
               {article.tagList.length > 0 ? (
                 article.tagList.map((tag, index) => (
-                  <span key={index} className={classes.tag}>
+                  <Tag key={index} className={classes.tag}>
                     #{tag}
-                  </span>
+                  </Tag>
                 ))
               ) : (
-                <span className={classes.tag}>Без тегов</span>
+                <Tag className={classes.tag}>Без тегов</Tag>
               )}
             </div>
           </div>
@@ -58,9 +93,20 @@ const ArticlePage = () => {
             <div className={classes.date}>{formattedDate}</div>
           </div>
           <img src={article.author.image} alt="avatar" className={classes.avaImg} />
+
+          {/* ✅ Кнопка Delete только для автора */}
+          {token && article.author.username === user?.username && (
+            <>
+              <Button danger onClick={handleDelete}>
+                Delete
+              </Button>
+              <Button onClick={handleEdit}>Edit</Button>
+            </>
+          )}
         </div>
       </div>
-      <p className={classes.description}>{article.description}</p>
+
+      <div className={classes.itemDescription}>{article.description}</div>
       <ReactMarkdown className={classes.content}>{article.body}</ReactMarkdown>
     </div>
   )

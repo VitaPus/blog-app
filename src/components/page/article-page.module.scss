@@ -1,6 +1,5 @@
 .article {
     width: 983px;
-    height: 807px;
     display: flex;
     background-color: #fff;
     margin: 26px auto;
@@ -11,6 +10,7 @@
     display: flex;
     justify-content: space-between;
     padding: 0 16px;
+    align-items: center;
 }
 .textInfo {
     display: flex;
@@ -34,17 +34,17 @@
     font-weight: 400;
     color: #1890ff;
     margin: 0px;
-    width: 160px;
+    width: 170px;
     height: 28px;
     overflow: hidden;
 }
 .itemDescription {
-    padding-left: 16px;
+    padding: 0 16px;
     width: 682px;
     height: 45px;
-    overflow: hidden;
     font-size: 12px;
     line-height: 22px;
+    color: rgba(0, 0, 0, 0.75)
 }
 .date {
     font-size: 12px;
@@ -57,10 +57,19 @@
     align-items: flex-end;
 }
 .tags {
+    display: flex;
     width: 160px;
-    height: 28px;
-    overflow: hidden;
+    height: 20px;
+    color: rgba(0, 0, 0, 0.5);
+    margin: 4px 0;
 }
 img {
     max-width: 350px;
+}
+.content {
+    font-family: Inter, sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 22px;
+    padding: 25px 42px 31px 16px;
 }

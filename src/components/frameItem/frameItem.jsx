@@ -2,6 +2,7 @@ import React from 'react'
 import { format } from 'date-fns'
 import { enGB } from 'date-fns/locale'
 import classes from './frameitem.module.scss'
+import { Tag } from 'antd'
 
 const FrameItem = ({ article, onClick }) => {
   const formattedDate = format(new Date(article.createdAt), 'MMM d, yyyy', { locale: enGB })
@@ -17,12 +18,12 @@ const FrameItem = ({ article, onClick }) => {
             <div className={classes.tags}>
               {article.tagList.length > 0 ? (
                 article.tagList.map((tag, index) => (
-                  <span key={index} className={classes.tag}>
+                  <Tag key={index} className={classes.tag}>
                     #{tag}
-                  </span>
+                  </Tag>
                 ))
               ) : (
-                <span className={classes.tag}>Без тегов</span>
+                <Tag className={classes.tag}>Без тегов</Tag>
               )}
             </div>
           </div>
