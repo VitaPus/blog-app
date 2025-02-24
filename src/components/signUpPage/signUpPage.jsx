@@ -1,12 +1,15 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { signUp } from '../../features/article-slice'
+import { Button, message } from 'antd'
 import classes from './signUpPage.module.scss'
-import { Button } from 'antd'
 
 const SignUpPage = () => {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
+
   const {
     register,
     handleSubmit,
@@ -17,76 +20,97 @@ const SignUpPage = () => {
   const onSubmit = async (data) => {
     try {
       await dispatch(signUp(data)).unwrap()
-      alert('Registration successful!')
+      message.success('Регистрация прошла успешно! 🎉')
+      setTimeout(() => navigate('/sign-in'), 1500)
     } catch (error) {
-      console.error('Sign-up error:', error)
+      message.error(`Ошибка регистрации: ${error.message || 'Попробуйте снова'}`)
     }
   }
 
   return (
     <div className={classes.formPos}>
-      <h3>Create new account</h3>
+      <h3 className={classes.formName}>Create new account</h3>
       <form onSubmit={handleSubmit(onSubmit)} className={classes.formUp}>
+        {/* Username */}
         <div className={classes.inputBox}>
           <label>Username</label>
           <input
+            className={errors.username ? classes.inputError : ''}
             {...register('username', {
-              required: 'Username is required',
-              minLength: { value: 3, message: 'Username must be at least 3 characters' },
-              maxLength: { value: 20, message: 'Username must be at most 20 characters' },
+              required: 'Имя пользователя обязательно',
+              minLength: { value: 3, message: 'Минимум 3 символа' },
+              maxLength: { value: 20, message: 'Максимум 20 символов' },
             })}
             placeholder="Username"
           />
-          {errors.username && <p>{errors.username.message}</p>}
+          {errors.username && <p className={classes.errorText}>{errors.username.message}</p>}
         </div>
 
+        {/* Email */}
         <div className={classes.inputBox}>
           <label>Email address</label>
           <input
             type="email"
+            className={errors.email ? classes.inputError : ''}
             {...register('email', {
-              required: 'Email is required',
-              pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Invalid email format' },
+              required: 'Email обязателен',
+              pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Некорректный формат email' },
             })}
             placeholder="Email address"
           />
-          {errors.email && <p>{errors.email.message}</p>}
+          {errors.email && <p className={classes.errorText}>{errors.email.message}</p>}
         </div>
 
+        {/* Password */}
         <div className={classes.inputBox}>
           <label>Password</label>
           <input
             type="password"
+            className={errors.password ? classes.inputError : ''}
             {...register('password', {
-              required: 'Password is required',
-              minLength: { value: 6, message: 'Password must be at least 6 characters' },
-              maxLength: { value: 40, message: 'Password must be at most 40 characters' },
+              required: 'Пароль обязателен',
+              minLength: { value: 6, message: 'Минимум 6 символов' },
+              maxLength: { value: 40, message: 'Максимум 40 символов' },
             })}
             placeholder="Password"
           />
-          {errors.password && <p>{errors.password.message}</p>}
+          {errors.password && <p className={classes.errorText}>{errors.password.message}</p>}
         </div>
 
+        {/* Confirm Password */}
         <div className={classes.inputBox}>
           <label>Repeat Password</label>
           <input
             type="password"
+            className={errors.confirmPassword ? classes.inputError : ''}
             {...register('confirmPassword', {
-              validate: (value) => value === getValues('password') || 'Passwords do not match',
+              validate: (value) => value === getValues('password') || 'Пароли не совпадают',
             })}
             placeholder="Password"
           />
-          {errors.confirmPassword && <p>{errors.confirmPassword.message}</p>}
+          {errors.confirmPassword && <p className={classes.errorText}>{errors.confirmPassword.message}</p>}
         </div>
 
-        <label>
-          <input type="checkbox" {...register('terms', { required: 'You must accept the terms' })} /> I agree to the
-          processing of my personal information
+        {/* Terms */}
+        <label className={classes.formLabel}>
+          <input
+            type="checkbox"
+            className={errors.terms ? classes.checkboxError : classes.formCheck}
+            {...register('terms', { required: 'Необходимо согласие' })}
+          />{' '}
+          I agree to the processing of my personal information
         </label>
-        {errors.terms && <p>{errors.terms.message}</p>}
+        {errors.terms && <p className={classes.errorText}>{errors.terms.message}</p>}
 
-        {/* Убираем onClick с кнопки, форма будет отправляться по submit */}
-        <Button type="primary">Sign Up</Button>
+        {/* Button */}
+        <div className={classes.boxBtn}>
+          <Button type="primary" htmlType="submit" className={classes.sendBtn}>
+          Create
+          </Button>
+          <span className={classes.boxBtnText}>
+          Already have an account? <a href="/sign-in">Sign In</a>
+          </span>
+        </div>
       </form>
     </div>
   )

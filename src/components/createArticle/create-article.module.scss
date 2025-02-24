@@ -6,10 +6,17 @@
     width: 938px;
     background-color: #fff;
     margin: 59px auto;
-    height: 701px;
     border-radius: 6px;
     box-shadow: 0px 0px 1px 0px;
     
+}
+
+.formName {
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 28px;
+    text-align: center;
+    margin-top: 48px;
 }
 input {
     height: 40px;
@@ -19,8 +26,7 @@ input {
 .formIn {
     display: flex;
     flex-direction: column;
-    width: 100%;
-    height: 292px;
+    width: 874px;
     gap: 12px;
 }
 .inputBox {
@@ -28,7 +34,42 @@ input {
     flex-direction: column;
     height: 64px;
 }
+
+.inputBoxBody {
+    display: flex;
+    flex-direction: column;
+    height: 192px;
+}
 .inputTag {
     display: flex;
-    height: 64px;
+    flex-direction: column;
+    margin-bottom: 48px;
+    gap: 5px;
+
+}
+.textareaBox {
+    height: 100%;
+    border-color: #BFBFBF;
+    border-radius: 4px;
+}
+.deleteBtn {
+    border-color: #F5222D;
+    color: #F5222D;
+    width: 118px;
+    height: 40px;
+}
+.tagInputWrapper {
+    display: flex;
+    gap: 17px;
+}
+.addBtn {
+    width: 136px;
+    height: 40px;
+    color: #1890FF;
+    border-color: #1890FF;
+}
+.sendBtn {
+    width: 319px;
+    height: 40px;
+    margin-top: 16px;
 }

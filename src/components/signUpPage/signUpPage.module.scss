@@ -2,20 +2,46 @@ input {
     height: 40px;
     border: 1px solid #BFBFBF;
     border-radius: 4px;
+    padding: 0 8px;
+    transition: border 0.3s ease;
+}
+
+label {
+    font-size: 14px;
+}
+
+/* Красная рамка для ошибок */
+.inputError {
+    border: 1px solid #ff4d4f !important;
+    height: 40px !important;
+}
+
+/* Текст ошибки */
+.errorText {
+    color: #ff4d4f;
+    font-size: 12px;
+    margin: 0px;
 }
 
 .formPos {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 21px;
     width: 384px;
     background-color: #fff;
     margin: 59px auto;
-    height: 599px;
+    height: 674px;
     border-radius: 6px;
-    box-shadow: 0px 0px 1px 0px;
-    
+    border: 1px solid #d9d9d9; 
+    box-shadow: 0px 22px 106px 0px rgba(0, 0, 0, 0.07);
+}
+
+.formName {
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 28px;
+    text-align: center;
+    margin-top: 48px;
 }
 
 .formUp {
@@ -23,10 +49,62 @@ input {
     flex-direction: column;
     width: 320px;
     height: 292px;
-    gap: 12px;
+    gap: 5px;
 }
+
+.formLabel {
+    display: flex;
+    border-top: 1px solid #BFBFBF;
+    gap: 10px;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 22px;
+    padding-top: 8px;
+    margin-top: 5px;
+    align-items: center;
+}
+
+/* Чекбокс с ошибкой */
+.formCheck {
+    margin: 0;
+    width: 16px;
+    height: 16px;
+    position: relative;
+    bottom: 10px;
+}
+
+.checkboxError {
+    outline: 1px solid #ff4d4f;
+    margin: 0;
+    width: 16px;
+    height: 16px;
+    position: relative;
+    bottom: 10px;
+}
+
 .inputBox {
     display: flex;
     flex-direction: column;
-    height: 64px;
+    height: 98px;
+}
+
+/* Кнопка */
+.sendBtn {
+    width: 319px;
+    height: 40px;
+}
+
+/* Текст под кнопкой */
+.boxBtnText {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 20px;
+    text-align: center;
+    color: #8C8C8C;
+}
+
+.boxBtn {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }

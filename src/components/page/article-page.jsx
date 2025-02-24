@@ -89,19 +89,20 @@ const ArticlePage = () => {
         </div>
         <div className={classes.userInfo}>
           <div className={classes.nameInfo}>
-            <div>{article.author.username}</div>
-            <div className={classes.date}>{formattedDate}</div>
+            <div>
+              <div>{article.author.username}</div>
+              <div className={classes.date}>{formattedDate}</div>
+            </div>
+            <img src={article.author.image} alt="avatar" className={classes.avaImg} />
           </div>
-          <img src={article.author.image} alt="avatar" className={classes.avaImg} />
 
-          {/* ✅ Кнопка Delete только для автора */}
           {token && article.author.username === user?.username && (
-            <>
-              <Button danger onClick={handleDelete}>
+            <div className={classes.buttonsArticle}>
+              <Button danger onClick={handleDelete} className={classes.deleteBtn}>
                 Delete
               </Button>
-              <Button onClick={handleEdit}>Edit</Button>
-            </>
+              <Button onClick={handleEdit} className={classes.editeBtn}>Edit</Button>
+            </div>
           )}
         </div>
       </div>

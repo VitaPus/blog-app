@@ -15,14 +15,16 @@
 .textInfo {
     display: flex;
     gap: 10px;
-    padding-top: 15px;
+
     width: 300px;
     height: 70px;
     overflow: hidden;
 }
 .userInfo {
     display: flex;
-    gap: 10px
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 15px;
 }
 .avaImg {
     width: 45px;
@@ -53,8 +55,9 @@
 }
 .nameInfo{
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
 }
 .tags {
     display: flex;
@@ -72,4 +75,19 @@ img {
     font-size: 14px;
     line-height: 22px;
     padding: 25px 42px 31px 16px;
+}
+
+.deleteBtn {
+    width: 78px;
+    height: 31px;
+}
+.editeBtn {
+    width: 65px;
+    height: 31px;
+    color: #52C41A;
+    border-color: #52C41A;
+}
+.buttonsArticle {
+    display: flex;
+    gap: 12px;
 }

@@ -4,26 +4,32 @@ import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { sendArticle } from '../../features/article-slice'
 import { useNavigate } from 'react-router-dom'
+import { Button, message } from 'antd'
 
 const CreateArticle = () => {
   const dispatch = useDispatch()
   const { register, handleSubmit} = useForm()
   const navigate = useNavigate()
   const [tags, setTags] = useState([])
-  const [tagInput, setTagInput] = useState('')  // ✅ локальное состояние для ввода тега
+  const [tagInput, setTagInput] = useState('')
 
   // ✅ Добавление тега
   const addTag = (e) => {
     e.preventDefault()
     if (tagInput.trim() && !tags.includes(tagInput.trim())) {
       setTags([...tags, tagInput.trim()])
-      setTagInput('')  // Очищаем поле после добавления
+      setTagInput('')
     }
   }
 
-  // ✅ Удаление тега
+  // ✅ Удаление тега из списка
   const removeTag = (index) => {
     setTags(tags.filter((_, i) => i !== index))
+  }
+
+  // ✅ Очистка инпута тега
+  const clearTagInput = () => {
+    setTagInput('')
   }
 
   // ✅ Отправка статьи
@@ -34,23 +40,25 @@ const CreateArticle = () => {
     }
     try {
       await dispatch(sendArticle(articleData)).unwrap()
+      message.success('Article created successfully!')
       navigate('/')
       window.location.reload()
     } catch (error) {
       console.log('Send error:', error)
+      message.error('Failed to create article.')
     }
   }
 
   return (
     <div className={classes.formPos}>
-      <h3>Create new article</h3>
+      <h3 className={classes.formName}>Create new article</h3>
       <form onSubmit={handleSubmit(onSubmit)} className={classes.formIn}>
         {/* Title */}
         <div className={classes.inputBox}>
           <label>Title</label>
           <input
-            type="text"  // ✅ Исправлено
-            {...register('title', { required: 'title is required' })}
+            type="text"
+            {...register('title', { required: 'Title is required' })}
             placeholder="Title"
           />
         </div>
@@ -59,47 +67,51 @@ const CreateArticle = () => {
         <div className={classes.inputBox}>
           <label>Short description</label>
           <input
-            type="text"  // ✅ Исправлено
-            {...register('description', { required: 'description is required' })}
+            type="text"
+            {...register('description', { required: 'Description is required' })}
             placeholder="Description"
           />
         </div>
 
         {/* Text */}
-        <div className={classes.inputBox}>
+        <div className={classes.inputBoxBody}>
           <label>Text</label>
           <textarea
-            {...register('text', { required: 'text is required' })}
+            {...register('body', { required: 'Text is required' })}
             placeholder="Text"
+            className={classes.textareaBox}
           />
         </div>
 
         {/* Tags */}
         <div className={classes.inputTag}>
           <label>Tags</label>
+
+          {/* ✅ Список добавленных тегов */}
+          <div className={classes.tagList}>
+            {tags.map((tag, index) => (
+              <div key={index} className={classes.tagInputWrapper}>
+                <input className={classes.tagItem} value={tag} readOnly />
+                <Button type="button" onClick={() => removeTag(index)} className={classes.deleteBtn}>Delete</Button>
+              </div>
+            ))}
+          </div>
+
+          {/* ✅ Поле ввода нового тега */}
           <div className={classes.tagInputWrapper}>
             <input
               type="text"
               value={tagInput}
               onChange={(e) => setTagInput(e.target.value)}
-              placeholder="Enter tag"
+              placeholder="Tag"
             />
-            <button onClick={addTag}>Add tag</button>
+            <Button type="button" onClick={clearTagInput} className={classes.deleteBtn}>Delete</Button>
+            <Button type="button" onClick={addTag} className={classes.addBtn}>Add tag</Button>
           </div>
 
-          {/* ✅ Список добавленных тегов */}
-          <ul className={classes.tagList}>
-            {tags.map((tag, index) => (
-              <li key={index} className={classes.tagItem}>
-                {tag}
-                <button onClick={() => removeTag(index)}>Delete</button>
-              </li>
-            ))}
-          </ul>
+          {/* ✅ Кнопка отправки */}
+          <Button type="primary" htmlType="submit" className={classes.sendBtn}>Send</Button>
         </div>
-
-        {/* Submit */}
-        <button type="submit">Send</button>
       </form>
     </div>
   )

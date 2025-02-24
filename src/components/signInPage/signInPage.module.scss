@@ -2,13 +2,13 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 21px;
     width: 384px;
     background-color: #fff;
     margin: 59px auto;
-    height: 599px;
+    height: 375px;
     border-radius: 6px;
-    box-shadow: 0px 0px 1px 0px;
+    border: 1px solid #d9d9d9; 
+    box-shadow: 0px 22px 106px 0px rgba(0, 0, 0, 0.07);
     
 }
 input {
@@ -16,15 +16,55 @@ input {
     border: 1px solid #BFBFBF;
     border-radius: 4px;
 }
+
+.formName {
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 28px;
+    text-align: center;
+    margin-top: 48px;
+}
+
 .formIn {
     display: flex;
     flex-direction: column;
     width: 320px;
     height: 292px;
-    gap: 12px;
+    gap: 5px;
 }
 .inputBox {
     display: flex;
     flex-direction: column;
-    height: 64px;
+    height: 98px;
+}
+
+.sendBtn {
+    width: 319px;
+    height: 40px;
+}
+
+.boxBtnText {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 20px;
+    text-align: center;
+    color: #8C8C8C;
+}
+
+.boxBtn {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.inputError {
+    border: 1px solid #ff4d4f !important;
+    height: 40px !important;
+}
+
+/* Текст ошибки */
+.errorText {
+    color: #ff4d4f;
+    font-size: 12px;
+    margin: 0px;
 }
