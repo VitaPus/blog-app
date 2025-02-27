@@ -1,93 +1,95 @@
-import React, { useState } from 'react'
-import classes from './create-article.module.scss'
-import { useDispatch } from 'react-redux'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { sendArticle } from '../../features/article-slice'
-import { useNavigate } from 'react-router-dom'
-import { Button, message } from 'antd'
+import { useNavigate, useParams } from 'react-router-dom'
+import {  useSelector } from 'react-redux'
+import { Button, message, Spin } from 'antd'
+import classes from './create-article.module.scss'
 
-const CreateArticle = () => {
-  const dispatch = useDispatch()
-  const { register, handleSubmit} = useForm()
+const ArticleForm = ({ isEditing }) => {
   const navigate = useNavigate()
+  const { slug } = useParams()
+  const { token } = useSelector((state) => state.articles || {})
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm()
+
+  const [loading, setLoading] = useState(isEditing)
   const [tags, setTags] = useState([])
   const [tagInput, setTagInput] = useState('')
 
-  // ✅ Добавление тега
+  useEffect(() => {
+    if (isEditing) {
+      fetch(`https://blog-platform.kata.academy/api/articles/${slug}`)
+        .then((res) => res.json())
+        .then((data) => {
+          const article = data.article
+          setValue('title', article.title)
+          setValue('description', article.description)
+          setValue('body', article.body)
+          setTags(article.tagList || [])
+          setLoading(false)
+        })
+        .catch(() => {
+          message.error('Failed to load article')
+          setLoading(false)
+        })
+    }
+  }, [isEditing, slug, setValue])
+
   const addTag = (e) => {
     e.preventDefault()
-    if (tagInput.trim() && !tags.includes(tagInput.trim())) {
+    if (tagInput.trim()) {
       setTags([...tags, tagInput.trim()])
       setTagInput('')
     }
   }
 
-  // ✅ Удаление тега из списка
-  const removeTag = (index) => {
-    setTags(tags.filter((_, i) => i !== index))
-  }
+  const removeTag = (index) => setTags(tags.filter((_, i) => i !== index))
+  const clearTagInput = () => setTagInput('')
 
-  // ✅ Очистка инпута тега
-  const clearTagInput = () => {
-    setTagInput('')
-  }
-
-  // ✅ Отправка статьи
   const onSubmit = async (data) => {
-    const articleData = {
-      ...data,
-      tagList: tags,
-    }
+    const articleData = { ...data, tagList: tags }
     try {
-      await dispatch(sendArticle(articleData)).unwrap()
-      message.success('Article created successfully!')
-      navigate('/')
+      const url = `https://blog-platform.kata.academy/api/articles${isEditing ? `/${slug}` : ''}`
+      const method = isEditing ? 'PUT' : 'POST'
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json', Authorization: `Token ${token}` },
+        body: JSON.stringify({ article: articleData })
+      })
+      if (!response.ok) throw new Error('Failed to save article')
+      message.success(`Article ${isEditing ? 'updated' : 'created'} successfully`)
+      navigate(isEditing ? `/articles/${slug}` : '/')
       window.location.reload()
     } catch (error) {
-      console.log('Send error:', error)
-      message.error('Failed to create article.')
+      message.error(error.message)
     }
   }
+
+  if (loading) return <Spin size="large" className={classes.loader} />
 
   return (
     <div className={classes.formPos}>
-      <h3 className={classes.formName}>Create new article</h3>
+      <h3 className={classes.formName}>{isEditing ? 'Edit Article' : 'Create New Article'}</h3>
       <form onSubmit={handleSubmit(onSubmit)} className={classes.formIn}>
-        {/* Title */}
         <div className={classes.inputBox}>
           <label>Title</label>
-          <input
-            type="text"
-            {...register('title', { required: 'Title is required' })}
-            placeholder="Title"
-          />
+          <input type="text" {...register('title', { required: 'Title is required' })} />
+          {errors.title && <span className={classes.errorMsg}>{errors.title.message}</span>}
         </div>
-
-        {/* Short description */}
+        
         <div className={classes.inputBox}>
           <label>Short description</label>
-          <input
-            type="text"
-            {...register('description', { required: 'Description is required' })}
-            placeholder="Description"
-          />
+          <input type="text" {...register('description', { required: 'Description is required' })} />
+          {errors.description && <span className={classes.errorMsg}>{errors.description.message}</span>}
         </div>
-
-        {/* Text */}
+        
         <div className={classes.inputBoxBody}>
           <label>Text</label>
-          <textarea
-            {...register('body', { required: 'Text is required' })}
-            placeholder="Text"
-            className={classes.textareaBox}
-          />
+          <textarea {...register('body', { required: 'Text is required' })} className={classes.textareaBox} />
+          {errors.body && <span className={classes.errorMsg}>{errors.body.message}</span>}
         </div>
-
-        {/* Tags */}
+        
         <div className={classes.inputTag}>
           <label>Tags</label>
-
-          {/* ✅ Список добавленных тегов */}
           <div className={classes.tagList}>
             {tags.map((tag, index) => (
               <div key={index} className={classes.tagInputWrapper}>
@@ -96,25 +98,16 @@ const CreateArticle = () => {
               </div>
             ))}
           </div>
-
-          {/* ✅ Поле ввода нового тега */}
           <div className={classes.tagInputWrapper}>
-            <input
-              type="text"
-              value={tagInput}
-              onChange={(e) => setTagInput(e.target.value)}
-              placeholder="Tag"
-            />
-            <Button type="button" onClick={clearTagInput} className={classes.deleteBtn}>Delete</Button>
+            <input type="text" value={tagInput} onChange={(e) => setTagInput(e.target.value)} />
+            <Button type="button" onClick={clearTagInput} className={classes.deleteBtn}>Clear</Button>
             <Button type="button" onClick={addTag} className={classes.addBtn}>Add tag</Button>
           </div>
-
-          {/* ✅ Кнопка отправки */}
-          <Button type="primary" htmlType="submit" className={classes.sendBtn}>Send</Button>
+          <Button type="primary" htmlType="submit" className={classes.sendBtn}>{isEditing ? 'Send' : 'Create'}</Button>
         </div>
       </form>
     </div>
   )
 }
 
-export default CreateArticle
+export default ArticleForm

@@ -9,9 +9,9 @@ import SignInPage from '../components/signInPage'
 import SignUpPage from '../components/signUpPage'
 import ProfilePage from '../components/profilePage'
 import classes from './App.module.scss'
-import CreateArticle from '../components/createArticle/create-article'
+import ArticleForm from '../components/createArticle/create-article'
 import PrivateRoute from '../features/private'
-import EditArticle from '../components/editArticle/edit-article'
+// import EditArticle from '../components/editArticle/edit-article'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -56,8 +56,8 @@ const App = () => {
           <Route path="/sign-in" element={<SignInPage />} />
           <Route path="/sign-up" element={<SignUpPage />} />
           <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/new-article" element={<PrivateRoute><CreateArticle /></PrivateRoute>} />
-          <Route path="/articles/:slug/edit" element={<EditArticle />} />
+          <Route path="/new-article" element={<PrivateRoute><ArticleForm isEditing={false} /></PrivateRoute>} />
+          <Route path="/articles/:slug/edit" element={<ArticleForm isEditing={true} />} />
 
         </Routes>
       </div>
