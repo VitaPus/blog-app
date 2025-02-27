@@ -25,21 +25,31 @@ const ArticlePage = () => {
   }, [dispatch])
 
   useEffect(() => {
+    dispatch(setLikesFromStorage())
+  
     fetch(`https://blog-platform.kata.academy/api/articles/${slug}`)
       .then((res) => res.json())
       .then((data) => {
         setCurrentArticle(data.article)
         setStatus('succeeded')
-        
-        // Загружаем лайки из localStorage для текущего пользователя
+  
+        // Загружаем лайки сначала из API
+        let isArticleLiked = data.article.favorited
+        let articleFavoritesCount = data.article.favoritesCount
+  
+        // Проверяем, есть ли данные в localStorage
         const likes = JSON.parse(localStorage.getItem('likes')) || {}
         if (likes[slug]) {
-          setIsLiked(likes[slug].favorited)
-          setFavoritesCount(likes[slug].favoritesCount)
+          isArticleLiked = likes[slug].favorited
+          articleFavoritesCount = likes[slug].favoritesCount
         }
+  
+        setIsLiked(isArticleLiked)
+        setFavoritesCount(articleFavoritesCount)
       })
       .catch(() => setStatus('failed'))
   }, [slug, dispatch])
+  
 
   const handleLikeClick = (event) => {
     event.stopPropagation()
